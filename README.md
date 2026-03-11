@@ -85,13 +85,33 @@ cd d:\mlclim\semanticast
 
 ### 2. Backend Setup
 
+#### Quick Setup (Windows — Recommended)
+
+Just navigate to the `backend` folder and run:
+
+```cmd
+cd backend
+setup.bat
+```
+
+This will automatically create the virtual environment, activate it, and install all dependencies. Then to start the server:
+
+```cmd
+run.bat
+```
+
+#### Manual Setup
+
+<details>
+<summary>Click to expand manual steps</summary>
+
 #### a. Navigate to the backend directory
 
 ```bash
 cd backend
 ```
 
-#### b. Create a Python virtual environment (recommended)
+#### b. Create a Python virtual environment
 
 ```bash
 python -m venv venv
@@ -99,25 +119,21 @@ python -m venv venv
 
 #### c. Activate the virtual environment
 
+**Windows (Command Prompt — recommended):**
+```cmd
+venv\Scripts\activate.bat
+```
+
 **Windows (PowerShell):**
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\venv\Scripts\Activate.ps1
 ```
 
-**Windows (Command Prompt):**
-```cmd
-venv\Scripts\activate.bat
-```
-
 **macOS/Linux:**
 ```bash
 source venv/bin/activate
 ```
-
-> **Troubleshooting:**
-> - **"Python was not found"** → Python is not installed. Download and install it from [python.org](https://www.python.org/downloads/). During installation, **check "Add Python to PATH"**.
-> - **"cannot be loaded because running scripts is disabled"** → Run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` in PowerShell first, then activate the venv again.
 
 #### d. Install Python dependencies
 
@@ -126,6 +142,12 @@ pip install -r requirements.txt
 ```
 
 > **Note:** The first install will download the BLIP model (~1GB). This only happens once.
+
+</details>
+
+> **Troubleshooting:**
+> - **"Python was not found"** → Python is not installed. Download Python 3.11 from [python.org](https://www.python.org/downloads/). During installation, **check "Add Python to PATH"**.
+> - **"running scripts is disabled"** → Use Command Prompt instead of PowerShell, or run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first.
 
 #### e. Run the backend server
 
