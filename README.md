@@ -99,15 +99,25 @@ python -m venv venv
 
 #### c. Activate the virtual environment
 
-**Windows:**
-```bash
-venv\Scripts\activate
+**Windows (PowerShell):**
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\venv\Scripts\Activate.ps1
+```
+
+**Windows (Command Prompt):**
+```cmd
+venv\Scripts\activate.bat
 ```
 
 **macOS/Linux:**
 ```bash
 source venv/bin/activate
 ```
+
+> **Troubleshooting:**
+> - **"Python was not found"** → Python is not installed. Download and install it from [python.org](https://www.python.org/downloads/). During installation, **check "Add Python to PATH"**.
+> - **"cannot be loaded because running scripts is disabled"** → Run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` in PowerShell first, then activate the venv again.
 
 #### d. Install Python dependencies
 
