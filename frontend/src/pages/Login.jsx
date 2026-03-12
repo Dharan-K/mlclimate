@@ -7,26 +7,54 @@
  */
 
 import React, { useState } from "react";
-import { signInWithPopup } from "firebase/auth";
+import {
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 
 function Login() {
   const [error, setError] = useState(null);
   const [signingIn, setSigningIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  /**
-   * Handle Google Sign-In button click.
-   * Uses Firebase signInWithPopup for a popup-based Google login.
-   */
   const handleGoogleLogin = async () => {
     setError(null);
     setSigningIn(true);
     try {
       await signInWithPopup(auth, googleProvider);
-      // On success, onAuthStateChanged in App.jsx will redirect to /dashboard
     } catch (err) {
       console.error("Login error:", err);
       setError("Failed to sign in with Google. Please try again.");
+    } finally {
+      setSigningIn(false);
+    }
+  };
+
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSigningIn(true);
+    try {
+      if (isSignUp) {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+    } catch (err) {
+      console.error("Email auth error:", err);
+      const messages = {
+        "auth/user-not-found": "No account found. Please sign up first.",
+        "auth/wrong-password": "Incorrect password. Please try again.",
+        "auth/email-already-in-use": "Email already in use. Try signing in.",
+        "auth/weak-password": "Password must be at least 6 characters.",
+        "auth/invalid-email": "Please enter a valid email address.",
+        "auth/invalid-credential": "Invalid email or password. Please try again.",
+      };
+      setError(messages[err.code] || "Authentication failed. Please try again.");
     } finally {
       setSigningIn(false);
     }
@@ -73,7 +101,57 @@ function Login() {
           </div>
 
           {/* Divider */}
-          <div className="divider my-0">Sign in to continue</div>
+          <div className="divider my-0">{isSignUp ? "Create an account" : "Sign in to continue"}</div>
+
+          {/* Email/Password Form */}
+          <form onSubmit={handleEmailLogin} className="w-full flex flex-col gap-3">
+            <input
+              type="email"
+              placeholder="Email address"
+              className="input input-bordered w-full"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="input input-bordered w-full"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+            <button
+              type="submit"
+              disabled={signingIn}
+              className="btn btn-primary btn-wide w-full normal-case text-base"
+            >
+              {signingIn ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  {isSignUp ? "Creating account..." : "Signing in..."}
+                </>
+              ) : (
+                isSignUp ? "Sign Up" : "Sign In"
+              )}
+            </button>
+          </form>
+
+          {/* Toggle Sign In / Sign Up */}
+          <p className="text-sm text-base-content/60">
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+            <button
+              type="button"
+              className="link link-primary font-semibold"
+              onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
+            >
+              {isSignUp ? "Sign In" : "Sign Up"}
+            </button>
+          </p>
+
+          {/* OR Divider */}
+          <div className="divider my-0">OR</div>
 
           {/* Google Sign-In Button */}
           <button
@@ -88,7 +166,6 @@ function Login() {
               </>
             ) : (
               <>
-                {/* Google Icon */}
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
